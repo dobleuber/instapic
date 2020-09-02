@@ -1,0 +1,28 @@
+version: "3.3"
+
+services:
+  nextjs:
+    ports:
+      - 3000:3000
+    build:
+      context: instapic_web
+      dockerfile: Dockerfile
+    volumes:
+      - ./instapic_web:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    env_file:
+      - ./instapic_web/.env.local
+    depends_on:
+      - django
+  django:
+    build:
+      context: instapic_api
+      dockerfile: Dockerfile
+    command: python instapic_api/manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./instapic_api/instapic_api/.env
